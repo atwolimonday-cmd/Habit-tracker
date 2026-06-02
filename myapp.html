@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Blossom | Routine & Habit Tracker</title>
+  <!-- Google Fonts: Inter Matrix -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom styles for Swiss-Modern Geometric Balance */
+    body {
+      background-color: #FAF9F6;
+      background-image: 
+        linear-gradient(rgba(45, 52, 54, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(45, 52, 54, 0.035) 1px, transparent 1px);
+      background-size: 24px 24px;
+      background-position: center top;
+    }
+    
+    .card-border {
+      border: 1px solid rgba(45, 52, 54, 0.1);
+    }
+
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(45, 52, 54, 0.15);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(45, 52, 54, 0.3);
+    }
+  </style>
+</head>
+<body class="font-sans text-[#2D3436] min-h-screen py-6 px-4 md:py-12 relative antialiased selection:bg-[#FFDDE2]">
+  <div class="max-w-5xl mx-auto relative z-10">
+    <!-- Header Hero Card -->
+    <header class="bg-white card-border rounded-xl p-6 md:p-8 mb-8 relative overflow-hidden flex flex-col md:flex-row items-stretch md:items-center justify-between gap-6">
+      <div class="absolute top-0 right-0 w-32 h-32 bg-[#FFDDE2] rounded-full blur-3xl opacity-20"></div>
+      <div class="absolute -bottom-10 left-10 w-40 h-40 bg-[#DDF4FF] rounded-full blur-3xl opacity-25"></div>
+      
+      <div class="relative z-10 flex items-center gap-4">
+        <div class="w-14 h-14 bg-[#FFDDE2]/20 border border-[#FFDDE2] rounded-xl flex items-center justify-center text-3xl">🌸</div>
+        <div>
+          <span class="text-[9px] font-mono font-bold text-[#7A4D53] uppercase tracking-widest block">Offline Standing Client</span>
+          <h1 class="font-sans font-extrabold text-2xl md:text-3xl tracking-tight text-[#2D3436] uppercase mt-0.5">Daily Blossom</h1>
+          <p class="text-[#5B4D63]/70 text-xs md:text-sm mt-0.5">Watering your positive habits day-by-day to cultivate a fulfilling routine.</p>
+        </div>
+      </div>
+      
+      <!-- Stats Summary Widget -->
+      <div class="relative z-10 grid grid-cols-3 gap-3 md:gap-4 bg-[#FAF9F6] card-border p-3.5 rounded-xl">
+        <div class="text-center px-1">
+          <span class="block text-[8px] font-mono font-bold text-[#5B4D63] uppercase tracking-wider">All Goals</span>
+          <span id="total-habits-badge" class="block font-sans font-bold text-base text-[#2D3436] mt-0.5">3</span>
+        </div>
+        <div class="text-center px-1 border-x border-[#2D3436]/10">
+          <span class="block text-[8px] font-mono font-bold text-[#5B4D63] uppercase tracking-wider">Completed</span>
+          <span id="completed-today-badge" class="block font-sans font-bold text-base text-[#2D5A4C] mt-0.5">0/3</span>
+        </div>
+        <div class="text-center px-1">
+          <span class="block text-[8px] font-mono font-bold text-[#5B4D63] uppercase tracking-wider">Best Run</span>
+          <span id="max-streak-badge" class="block font-sans font-bold text-base text-[#D47E2A] mt-0.5">0d</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Grid Layout -->
+    <main class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <!-- Left Column: Add New Habit Form & Motivational Banner -->
+      <section class="lg:col-span-4 space-y-6">
+        <!-- New Habit Creator Form -->
+        <div class="bg-white card-border rounded-xl p-6">
+          <h2 class="font-sans font-extrabold text-base text-[#2D3436] mb-4 flex items-center gap-2 uppercase tracking-tight">
+            <span>🌱</span> Add Habit
+          </h2>
+          
+          <form id="habit-form" class="space-y-4">
+            <div>
+              <label for="habit-name" class="block text-[9px] font-mono font-bold text-[#5B4D63] uppercase tracking-wider mb-1.5">Habit Title</label>
+              <input type="text" id="habit-name" required placeholder="e.g. Read 15 minutes 📖" 
+                class="w-full px-4 py-3 bg-[#FAF9F6] card-border rounded-xl focus:outline-[#2D3436]/20 transition-all text-xs text-[#2D3436] placeholder-neutral-400">
+            </div>
+            
+            <div>
+              <label for="habit-desc" class="block text-[9px] font-mono font-bold text-[#5B4D63] uppercase tracking-wider mb-1.5">Description / Purpose</label>
+              <textarea id="habit-desc" placeholder="Why is this habit valuable to you?" rows="2" 
+                class="w-full px-4 py-3 bg-[#FAF9F6] card-border rounded-xl focus:outline-[#2D3436]/20 transition-all text-xs text-[#2D3436] placeholder-neutral-400 resize-none"></textarea>
+            </div>
+            
+            <div>
+              <label for="habit-frequency" class="block text-[9px] font-mono font-bold text-[#5B4D63] uppercase tracking-wider mb-1.5">Frequency</label>
+              <select id="habit-frequency" class="w-full px-4 py-3 bg-[#FAF9F6] card-border rounded-xl focus:outline-none focus:ring-1 focus:ring-[#2D3436]/20 transition-all text-xs text-[#2D3436] font-sans">
+                <option value="daily">Everyday (Daily)</option>
+                <option value="weekdays">Weekdays (Mon-Fri)</option>
+                <option value="weekly">Once Weekly</option>
+              </select>
+            </div>
+            
+            <div>
+              <label class="block text-[9px] font-mono font-bold text-[#5B4D63] uppercase tracking-wider mb-2">Pastel Flavor Color</label>
+              <div class="grid grid-cols-6 gap-2" id="color-selector">
+                <button type="button" data-color="bg-[#FFDDE2]/30 border-[#FFDDE2] text-[#7A4D53]" class="palette-btn w-full aspect-square border border-[#2D3436]/10 rounded-lg cursor-pointer transition-all active:scale-95 ring-[1.5px] ring-[#2D3436] ring-offset-1" style="background-color: #FFDDE2;"></button>
+                <button type="button" data-color="bg-[#D1E8E2]/30 border-[#D1E8E2] text-[#2D5A4C]" class="palette-btn w-full aspect-square border border-[#2D3436]/10 rounded-lg cursor-pointer transition-all active:scale-95" style="background-color: #D1E8E2;"></button>
+                <button type="button" data-color="bg-[#E1D5E7]/40 border-[#E1D5E7] text-[#5B4D63]" class="palette-btn w-full aspect-square border border-[#2D3436]/10 rounded-lg cursor-pointer transition-all active:scale-95" style="background-color: #E1D5E7;"></button>
+                <button type="button" data-color="bg-[#FFF4BD]/40 border-[#FFF4BD] text-[#6B5E2E]" class="palette-btn w-full aspect-square border border-[#2D3436]/10 rounded-lg cursor-pointer transition-all active:scale-95" style="background-color: #FFF4BD;"></button>
+                <button type="button" data-color="bg-[#D2F1F8]/40 border-[#D2F1F8] text-[#225B66]" class="palette-btn w-full aspect-square border border-[#2D3436]/10 rounded-lg cursor-pointer transition-all active:scale-95" style="background-color: #D2F1F8;"></button>
+                <button type="button" data-color="bg-[#FFE5D9]/40 border-[#FFE5D9] text-[#7A4035]" class="palette-btn w-full aspect-square border border-[#2D3436]/10 rounded-lg cursor-pointer transition-all active:scale-95" style="background-color: #FFE5D9;"></button>
+              </div>
+            </div>
+            
+            <button type="submit" class="w-full mt-2 py-3 px-4 bg-[#2D3436] hover:bg-[#2D3436]/90 text-[#FAF9F6] font-mono font-bold uppercase tracking-wider rounded-xl text-xs transition-all shadow-sm active:scale-[0.98]">
+              Create Goal
+            </button>
+          </form>
+        </div>
+        
+        <!-- Beautiful Motivational Card -->
+        <div class="bg-[#FFF4BD]/15 border border-[#FFF4BD] rounded-xl p-6 relative overflow-hidden">
+          <div class="absolute bottom-0 right-0 w-24 h-24 bg-[#FFF4BD]/40 rounded-full blur-2xl opacity-50"></div>
+          <div class="relative z-10">
+            <span class="text-xl">💡</span>
+            <h3 class="font-sans font-bold text-xs text-[#6B5E2E] tracking-tight uppercase mt-2 mb-1">Consistency compounds</h3>
+            <p class="text-[#6B5E2E]/80 text-xs leading-relaxed font-sans">It takes roughly 66 days to form a new routine. Keep toggling checkmarks even on slow days—every single step waters your blossom!</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: Week Calendar and Habits List -->
+      <section class="lg:col-span-8 space-y-6">
+        <!-- Week Navigator Banner -->
+        <div class="bg-white card-border p-4 rounded-xl flex items-center justify-between">
+          <button id="prev-week" class="p-2 hover:bg-[#FAF9F6] card-border rounded-xl transition-all cursor-pointer">
+            <svg class="w-4 h-4 text-[#2D3436]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+          </button>
+          
+          <div class="flex items-center gap-2">
+            <span id="week-date-range" class="font-sans font-extrabold text-[#2D3436] text-xs uppercase tracking-wider">--</span>
+            <span id="current-week-indicator" class="hidden text-[8px] font-mono px-2 py-0.5 bg-[#D1E8E2] text-[#2D5A4C] border border-[#A2D3C7] rounded-full uppercase font-bold tracking-wider">Present</span>
+          </div>
+          
+          <button id="next-week" class="p-2 hover:bg-[#FAF9F6] card-border rounded-xl transition-all cursor-pointer">
+            <svg class="w-4 h-4 text-[#2D3436]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+
+        <!-- Habits List Container -->
+        <div class="space-y-4" id="habits-list">
+          <!-- Nested Dynamically -->
+        </div>
+        
+        <!-- Empty State UI -->
+        <div id="empty-state" class="hidden py-16 px-4 text-center bg-white border border-dashed border-[#2D3436]/10 rounded-xl">
+          <span class="text-4xl">🌻</span>
+          <h3 class="font-sans font-extrabold text-[#2D3436] mt-3 uppercase tracking-tight">No habits added yet</h3>
+          <p class="text-[#5B4D63]/70 text-xs mt-1 max-w-sm mx-auto font-sans leading-relaxed">Use the left sidebar menu to log your first daily goal, customize their palette aesthetic, and start building streaks.</p>
+        </div>
+      </section>
+    </main>
+    
+    <!-- App Footer -->
+    <footer class="mt-16 text-center border-t border-[#2D3436]/15 pt-6">
+      <p class="text-[#5B4D63]/70 font-mono text-[10px] uppercase tracking-wider flex items-center justify-center gap-1">
+        <span>Made with 🤍 as a self-contained local habit tracker.</span>
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    // Initial habits template config
+    const INITIAL_TEMPLATE_HABITS = [
+  {
+    "id": "1",
+    "name": "Morning Hydration 💧",
+    "description": "Drink a tall glass of cool water right after waking up to activate organs.",
+    "color": "bg-[#D2F1F8]/40 border-[#D2F1F8] text-[#225B66]",
+    "colorName": "Sky Frost",
+    "createdAt": "2026-06-02T11:02:44.431Z",
+    "completedDays": [
+      "2026-06-02"
+    ],
+    "frequency": "daily",
+    "streak": 1,
+    "maxStreak": 1
+  },
+  {
+    "id": "2",
+    "name": "10-Min Mindfulness 🧘‍♂️",
+    "description": "Practice quiet belly-breathing to establish calmness for the coming day.",
+    "color": "bg-[#FFDDE2]/30 border-[#FFDDE2] text-[#7A4D53]",
+    "colorName": "Blush Rose",
+    "createdAt": "2026-06-02T11:02:44.432Z",
+    "completedDays": [],
+    "frequency": "daily",
+    "streak": 0,
+    "maxStreak": 0
+  },
+  {
+    "id": "3",
+    "name": "Read a Book 📖",
+    "description": "Read at least 5 pages of non-fiction, fiction or professional journals.",
+    "color": "bg-[#D1E8E2]/30 border-[#D1E8E2] text-[#2D5A4C]",
+    "colorName": "Fresh Mint",
+    "createdAt": "2026-06-02T11:02:44.432Z",
+    "completedDays": [],
+    "frequency": "daily",
+    "streak": 0,
+    "maxStreak": 0
+  }
+];
+    
+    // Core State variables
+    let habits = [];
+    let activeColor = 'bg-[#FFDDE2]/30 border-[#FFDDE2] text-[#7A4D53]'; // Current selected form color helper
+    let weekOffset = 0; // 0 is current week, -1 previous, etc.
+    
+    // Setup event listeners on startup
+    window.addEventListener('DOMContentLoaded', () => {
+      loadHabits();
+      setupHandlers();
+      renderApp();
+    });
+
+    function loadHabits() {
+      const stored = localStorage.getItem('pastel_habit_tracker_local_data');
+      if (stored) {
+        try {
+          habits = JSON.parse(stored);
+        } catch (e) {
+          habits = INITIAL_TEMPLATE_HABITS;
+        }
+      } else {
+        habits = INITIAL_TEMPLATE_HABITS;
+        saveHabits();
+      }
+    }
+
+    function saveHabits() {
+      localStorage.setItem('pastel_habit_tracker_local_data', JSON.stringify(habits));
+    }
+
+    function setupHandlers() {
+      // Color selector click handlers
+      const colorBtns = document.querySelectorAll('.palette-btn');
+      colorBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          // Remove ring style from previous selection
+          colorBtns.forEach(b => {
+            b.classList.remove('ring-[1.5px]', 'ring-[#2D3436]', 'ring-offset-1');
+          });
+          
+          btn.classList.add('ring-[1.5px]', 'ring-[#2D3436]', 'ring-offset-1');
+          activeColor = btn.getAttribute('data-color');
+        });
+      });
+
+      // Submit new habit
+      const form = document.getElementById('habit-form');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const nameInput = document.getElementById('habit-name');
+        const descInput = document.getElementById('habit-desc');
+        const freqInput = document.getElementById('habit-frequency');
+        
+        const paletteMap = {
+          'bg-[#FFDDE2]/30 border-[#FFDDE2] text-[#7A4D53]': 'Blush Rose',
+          'bg-[#D1E8E2]/30 border-[#D1E8E2] text-[#2D5A4C]': 'Fresh Mint',
+          'bg-[#E1D5E7]/40 border-[#E1D5E7] text-[#5B4D63]': 'Sweet Lavender',
+          'bg-[#FFF4BD]/40 border-[#FFF4BD] text-[#6B5E2E]': 'Lemon Yellow',
+          'bg-[#D2F1F8]/40 border-[#D2F1F8] text-[#225B66]': 'Sky Frost',
+          'bg-[#FFE5D9]/40 border-[#FFE5D9] text-[#7A4035]': 'Warm Apricot'
+        };
+
+        const newHabit = {
+          id: 'h-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+          name: nameInput.value.trim(),
+          description: descInput.value.trim(),
+          color: activeColor,
+          colorName: paletteMap[activeColor] || 'Custom Sweet',
+          createdAt: new Date().toISOString(),
+          completedDays: [],
+          frequency: freqInput.value,
+          streak: 0,
+          maxStreak: 0
+        };
+
+        habits.push(newHabit);
+        saveHabits();
+        
+        // Reset inputs
+        nameInput.value = '';
+        descInput.value = '';
+        
+        renderApp();
+      });
+
+      // Week navigators
+      document.getElementById('prev-week').addEventListener('click', () => {
+        weekOffset--;
+        renderApp();
+      });
+
+      document.getElementById('next-week').addEventListener('click', () => {
+        weekOffset++;
+        renderApp();
+      });
+    }
+
+    // Generate accurate weekday column dates for the selected page offset
+    function getWeekDays(offset) {
+      const today = new Date();
+      const currentDay = today.getDay(); // 0 Sunday, 1 Monday etc.
+      // Offset translation to make Monday index 0 and Sunday index 6
+      const diff = today.getDate() - currentDay + (currentDay === 0 ? -6 : 1) + (offset * 7);
+      const monday = new Date(today.setDate(diff));
+      
+      const weekdaysList = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+      const weekDates = [];
+      
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const dayOfMonth = String(d.getDate()).padStart(2, '0');
+        const dateString = year + '-' + month + '-' + dayOfMonth;
+        
+        weekDates.push({
+          dateString,
+          shortLabel: weekdaysList[i],
+          dayOfMonth: d.getDate(),
+          rawDate: d
+        });
+      }
+      return weekDates;
+    }
+
+    // Helper to calculate active streak dynamically for checking a sequence of entries
+    function recalculateStreaks(completedDays) {
+      if (completedDays.length === 0) return { current: 0, max: 0 };
+      
+      // Filter any duplicates or empty strings, then sort chronological descending
+      const uniqueDates = [...new Set(completedDays)].filter(Boolean).sort((a, b) => new Date(b) - new Date(a));
+      if (uniqueDates.length === 0) return { current: 0, max: 0 };
+
+      const todayStr = new Date().toISOString().split('T')[0];
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toISOString().split('T')[0];
+      
+      const hasToday = uniqueDates.includes(todayStr);
+      const hasYesterday = uniqueDates.includes(yesterdayStr);
+      
+      let currentStreak = 0;
+      let maxStreak = 1;
+      let tempStreak = 1;
+
+      // Historical assessment for Max Streak
+      const dateObjects = uniqueDates.map(d => new Date(d));
+      let lastChecked = dateObjects[0];
+
+      for (let i = 1; i < dateObjects.length; i++) {
+        const nextDate = dateObjects[i];
+        const diffTime = Math.abs(lastChecked - nextDate);
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        if (diffDays === 1) {
+          tempStreak++;
+        } else if (diffDays > 1) {
+          if (tempStreak > maxStreak) maxStreak = tempStreak;
+          tempStreak = 1;
+        }
+        lastChecked = nextDate;
+      }
+      if (tempStreak > maxStreak) maxStreak = tempStreak;
+
+      // Current active sequence calculation
+      if (hasToday || hasYesterday) {
+        currentStreak = 1;
+        let runningDate = new Date(hasToday ? todayStr : yesterdayStr);
+        while (true) {
+          const prev = new Date(runningDate);
+          prev.setDate(prev.getDate() - 1);
+          const prevStr = prev.toISOString().split('T')[0];
+          
+          if (uniqueDates.includes(prevStr)) {
+            currentStreak++;
+            runningDate = prev;
+          } else {
+            break;
+          }
+        }
+      } else {
+        currentStreak = 0;
+      }
+
+      return { current: currentStreak, max: Math.max(maxStreak, currentStreak) };
+    }
+
+    // Main Toggle Handler
+    function toggleDate(habitId, dateStr) {
+      const idx = habits.findIndex(h => h.id === habitId);
+      if (idx === -1) return;
+      
+      const dateIndex = habits[idx].completedDays.indexOf(dateStr);
+      if (dateIndex > -1) {
+        habits[idx].completedDays.splice(dateIndex, 1);
+      } else {
+        habits[idx].completedDays.push(dateStr);
+      }
+      
+      // Recalc stats
+      const streaks = recalculateStreaks(habits[idx].completedDays);
+      habits[idx].streak = streaks.current;
+      habits[idx].maxStreak = streaks.max;
+      
+      saveHabits();
+      renderApp();
+    }
+
+    function deleteHabit(habitId) {
+      if (confirm('Are you sure you want to remove this habit? Progress will be lost.')) {
+        habits = habits.filter(h => h.id !== habitId);
+        saveHabits();
+        renderApp();
+      }
+    }
+
+    function renderApp() {
+      const habitsList = document.getElementById('habits-list');
+      const emptyState = document.getElementById('empty-state');
+      const totalBad = document.getElementById('total-habits-badge');
+      const compBad = document.getElementById('completed-today-badge');
+      const maxBad = document.getElementById('max-streak-badge');
+      const weekIndicator = document.getElementById('current-week-indicator');
+      const weekRange = document.getElementById('week-date-range');
+
+      // Update basic counts
+      totalBad.textContent = habits.length;
+      
+      const todayString = new Date().toISOString().split('T')[0];
+      const completedTodayCount = habits.filter(h => h.completedDays.includes(todayString)).length;
+      compBad.textContent = \`\${completedTodayCount}/\${habits.length}\`;
+      
+      const globalMaxStreak = habits.length > 0 ? Math.max(...habits.map(h => h.maxStreak || 0)) : 0;
+      maxBad.textContent = \`\${globalMaxStreak}d\`;
+
+      // Render week ranges
+      const weekdays = getWeekDays(weekOffset);
+      const startD = weekdays[0].rawDate;
+      const endD = weekdays[6].rawDate;
+      
+      const options = { month: 'short', day: 'numeric' };
+      weekRange.textContent = \`\${startD.toLocaleDateString('en-US', options)} - \${endD.toLocaleDateString('en-US', options)}, \${endD.getFullYear()}\`;
+      
+      if (weekOffset === 0) {
+        weekIndicator.classList.remove('hidden');
+      } else {
+        weekIndicator.classList.add('hidden');
+      }
+
+      // Display empty states or items
+      if (habits.length === 0) {
+        habitsList.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      } else {
+        emptyState.classList.add('hidden');
+      }
+
+      // Render items
+      habitsList.innerHTML = '';
+      
+      habits.forEach(habit => {
+        const colorClassMap = {
+          'bg-[#FFDDE2]/30 border-[#FFDDE2] text-[#7A4D53]': { bg: '#FFDDE2', text: '#7A4D53', border: '#FFAEB9', dot: '#E07A8A' },
+          'bg-[#D1E8E2]/30 border-[#D1E8E2] text-[#2D5A4C]': { bg: '#D1E8E2', text: '#2D5A4C', border: '#A2D3C7', dot: '#3FA38D' },
+          'bg-[#E1D5E7]/40 border-[#E1D5E7] text-[#5B4D63]': { bg: '#E1D5E7', text: '#5B4D63', border: '#CBB2DA', dot: '#8D739B' },
+          'bg-[#FFF4BD]/40 border-[#FFF4BD] text-[#6B5E2E]': { bg: '#FFF4BD', text: '#6B5E2E', border: '#FCE782', dot: '#CCA429' },
+          'bg-[#D2F1F8]/40 border-[#D2F1F8] text-[#225B66]': { bg: '#D2F1F8', text: '#225B66', border: '#9DD8E5', dot: '#3E96CE' },
+          'bg-[#FFE5D9]/40 border-[#FFE5D9] text-[#7A4035]': { bg: '#FFE5D9', text: '#7A4035', border: '#FDAF9B', dot: '#D47E2A' }
+        };
+
+        const colConfig = colorClassMap[habit.color] || colorClassMap['bg-[#FFDDE2]/30 border-[#FFDDE2] text-[#7A4D53]'];
+        const isCompletedToday = habit.completedDays.includes(todayString);
+
+        let itemHTML = \`
+          <div class="bg-white border border-[#2D3436]/10 rounded-2xl p-5 md:p-6 shadow-[0_2px_8px_rgba(45,52,54,0.01)] flex flex-col md:flex-row md:items-center justify-between gap-6 transition-all duration-300">
+            <!-- Left Meta Section -->
+            <div class="space-y-2 flex-grow max-w-sm">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full" style="background-color: \${colConfig.dot}"></span>
+                <h3 class="font-sans font-extrabold text-base text-[#2D3436] uppercase tracking-tight">\${escapeHTML(habit.name)}</h3>
+              </div>
+              <p class="text-xs text-[#5B4D63]/80 font-sans leading-relaxed">\${escapeHTML(habit.description || 'No description listed.')}</p>
+              
+              <!-- Badges Info -->
+              <div class="flex items-center gap-1.5 flex-wrap pt-1.5 font-mono text-[9px] font-bold">
+                <span class="px-2.5 py-1 rounded-lg uppercase tracking-wider" style="background-color: \${colConfig.bg}; color: \${colConfig.text};">
+                  \${habit.frequency}
+                </span>
+                <span class="bg-[#FFF4BD] text-[#6B5E2E] border border-[#FCE782] px-2.5 py-1 rounded-lg uppercase tracking-wider">
+                  🔥 \${habit.streak}d streak
+                </span>
+                <span class="bg-[#FAF9F6] text-[#5B4D63] border border-[#2D3436]/10 px-2.5 py-1 rounded-lg uppercase">
+                  Max \${habit.maxStreak || 0}d
+                </span>
+              </div>
+            </div>
+            
+            <!-- Week Calendar Grid -->
+            <div class="flex items-center justify-between md:justify-end gap-1.5 md:gap-2.5 overflow-x-auto py-1">
+              \${weekdays.map(day => {
+                const isSelected = habit.completedDays.includes(day.dateString);
+                const isToday = day.dateString === todayString;
+                
+                let checkStyle = '';
+                if (isSelected) {
+                  checkStyle = \\\`background-color: \${colConfig.text}; border-color: \${colConfig.text}; color: white;\\\`;
+                } else if (isToday) {
+                  checkStyle = \\\`background-color: #FAF9F6; border-color: \${colConfig.dot}; outline: 2px dashed \${colConfig.dot}; outline-offset: 1px;\\\`;
+                } else {
+                  checkStyle = 'background-color: #FAF9F6; border-color: rgba(45, 52, 54, 0.1);';
+                }
+
+                return \\\`
+                  <button onclick="toggleDate('\\\${habit.id}', '\\\${day.dateString}')" 
+                    class="w-9 h-13 rounded-xl flex flex-col items-center justify-center border transition-all cursor-pointer select-none active:scale-95 duration-200"
+                    style="\\\${checkStyle}">
+                    <span class="text-[8px] font-mono uppercase tracking-wider font-bold opacity-75 mb-0.5 \\\${isSelected ? 'text-[#FAF9F6]' : 'text-[#5B4D63]/70'}">\\\${day.shortLabel}</span>
+                    <span class="font-sans text-xs font-bold \\\${isSelected ? 'text-white' : 'text-[#2D3436]'}">\\\${day.dayOfMonth}</span>
+                  </button>
+                \\\`;
+              }).join('')}
+              
+              <!-- Trash Button -->
+              <button onclick="deleteHabit('\\\${habit.id}')" class="p-2 ml-1 md:ml-2.5 hover:bg-[#FFDDE2] hover:text-[#7A4D53] rounded-xl text-[#5B4D63]/60 transition-all cursor-pointer border border-transparent">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </button>
+            </div>
+          </div>
+        \`;
+        
+        habitsList.insertAdjacentHTML('beforeend', itemHTML);
+      });
+    }
+
+    // Simple HTML escape helper
+    function escapeHTML(str) {
+      if (!str) return '';
+      return str.replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+      );
+    }
+  </script>
+</body>
+</html>
